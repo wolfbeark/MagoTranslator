@@ -1,13 +1,28 @@
-import logo from "./logo.svg";
-import "./App.css";
+/* eslint-disable */
+
+import styled, { ThemeProvider } from "styled-components";
+import { Routes, Route } from "react-router-dom";
+import { WhiteTheme } from "./theme";
+
+import Home from "./routes/Home";
+import Authentication from "./routes/Authentication";
+import Multi from "./routes/Multi";
+const AppContainer = styled.div`
+  width: 100vw;
+  height: auto;
+`;
 
 function App() {
-  const test = process.env;
-
   return (
-    <div className="App">
-      <img src={`${process.env.PUBLIC_URL}/images/Default0.png`} alt="" />
-    </div>
+    <ThemeProvider theme={WhiteTheme}>
+      <AppContainer>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Authentication />} />
+          <Route path="/multi" element={<Multi />} />
+        </Routes>
+      </AppContainer>
+    </ThemeProvider>
   );
 }
 
