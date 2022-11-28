@@ -48,6 +48,7 @@ export const multiManagerAtom = atom({
     MultiModelNameArr: [],
     ModelExist: false,
     ExistModelCount: 0,
+    isOpenExtra: false,
   },
 });
 export const secondManagerAtom = atom({

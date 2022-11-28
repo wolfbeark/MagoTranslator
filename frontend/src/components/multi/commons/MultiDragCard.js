@@ -62,6 +62,7 @@ function MultiDragCard(props) {
     thisModelDeckType,
     firstCardCount,
     thisModelFirstCardInfoArr,
+    thisModelFirstNumArr,
   } = multiModel[CurrentModelNumber];
   const [privateRotate, setPrivateRotate] = useState(
     thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isRotate
@@ -69,15 +70,8 @@ function MultiDragCard(props) {
   const [privateFlip, setPrivateFlip] = useState(
     thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isFlip
   );
-  // const [modelNumber, setModelNumber] = useState(
-  //   multiManager.CurrentModelNumber
-  // );
-  // const [childNumber, setChildNumber] = useState(
-  //   multiModel[multiManager.CurrentModelNumber].CurrentChildNumber
-  // );
-  // const [selectNumber, setSelectNumber] = useState(
-  //   multiModel[modelNumber].SecondSpread[childNumber].CurrentSelectNum
-  // );
+  const [imgRoute, setImgRoute] = useState();
+
   const [thisIdx, setThisIdx] = useState(0);
   const [errorPos, setErrorPos] = useState({ x: 0, y: 0 });
   const [cardInfo, setCardInfo] = useState({
@@ -215,19 +209,32 @@ function MultiDragCard(props) {
       setPrivateFlip(true);
     }
   }, [thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isFlip]);
-  // useEffect(() => {
-  //   setModelNumber(multiManager.CurrentModelNumber);
-  // }, [multiManager.CurrentModelNumber]);
-  // useEffect(() => {
-  //   setChildNumber(
-  //     multiModel[multiManager.CurrentModelNumber].CurrentChildNumber
-  //   );
-  // }, [multiModel[multiManager.CurrentModelNumber].CurrentChildNumber]);
-  // useEffect(() => {
-  //   setSelectNumber(
-  //     multiModel[modelNumber].SecondSpread[childNumber].CurrentSelectNum
-  //   );
-  // }, [multiModel[modelNumber].SecondSpread[childNumber].CurrentSelectNum]);
+  useEffect(() => {
+    let flag =
+      thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].cardType;
+    switch (flag) {
+      case 0:
+        setImgRoute(
+          //`/images/ArcanaOfCard/DefaultImages/TotalImages/Default${dragCardNumArr[_count]}.png` // thiscount 원래 _count였음
+          //`/images/TarotDefault/Default${multiModel[CurrentModelNumber].thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`
+          `/images/TarotDefault/Default${thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`
+        );
+
+        break;
+      case 1:
+        setImgRoute(
+          `/images/Lenormand/DefaultImages/Default_Lenormand${dragCardNumArr[_count]}.png`
+        );
+        break;
+      case 2:
+        setImgRoute(`/images/IChing/iching${dragCardNumArr[_count]}.png`);
+        break;
+      case 3:
+        break;
+      default:
+        break;
+    }
+  }, []);
 
   const onDragStartHandler = (e) => {
     let alpha = waitingInfo.x - (e.pageX - e.offsetX);
@@ -826,80 +833,126 @@ function MultiDragCard(props) {
   };
   const styleItem = () => {
     let temp;
-    if (thisModelDeckType !== 0) {
-      if (thisModelDeckType === 1) {
-        if (
-          thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isDraged ===
-            false &&
-          thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
-            .isInSpread === true
-          // if cardCount >= firstCardCount
-          // if cardType // Tarot LenorMand... 나중에 추가
-        ) {
-          if (privateRotate === false) {
+    if (
+      thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isExtraCard ===
+      false
+    ) {
+      if (thisModelDeckType !== 0) {
+        if (thisModelDeckType === 1) {
+          if (
+            thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+              .isDraged === false &&
+            thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+              .isInSpread === true
+            // if cardCount >= firstCardCount
+            // if cardType // Tarot LenorMand... 나중에 추가
+          ) {
+            if (privateRotate === false) {
+              temp = {
+                x: threePos[cardCount].x,
+                y: threePos[cardCount].y,
+              };
+            } else {
+              temp = {
+                x: threePos[cardCount].x,
+                y: threePos[cardCount].y,
+              };
+            }
+          } else {
             temp = {
-              x: threePos[cardCount].x,
-              y: threePos[cardCount].y,
+              x: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+                .privateX,
+              y: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+                .privateY,
+            };
+          }
+        }
+        if (thisModelDeckType === 2) {
+          if (
+            thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+              .isDraged === false &&
+            thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+              .isInSpread === true
+          ) {
+            temp = {
+              x: sevenPos[cardCount].x,
+              y: sevenPos[cardCount].y,
+              //zIndex: cardCount,
             };
           } else {
             temp = {
-              x: threePos[cardCount].x,
-              y: threePos[cardCount].y,
+              x: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+                .privateX,
+              y: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+                .privateY,
+              //zIndex: cardCount,
             };
           }
-        } else {
-          temp = {
-            x: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
-              .privateX,
-            y: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
-              .privateY,
-          };
         }
-      }
-      if (thisModelDeckType === 2) {
+        if (thisModelDeckType === 3) {
+          if (
+            thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+              .isDraged === false &&
+            thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+              .isInSpread === true
+          ) {
+            temp = {
+              x: celticPos[cardCount].x,
+              y: celticPos[cardCount].y,
+            };
+          } else {
+            temp = {
+              x: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+                .privateX,
+              y: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+                .privateY,
+            };
+          }
+        }
+      } else if (thisModelDeckType === 0) {
+        // Free
         if (
           thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isDraged ===
             false &&
           thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
-            .isInSpread === true
+            .isInSpread === false
         ) {
           temp = {
-            x: sevenPos[cardCount].x,
-            y: sevenPos[cardCount].y,
-            //zIndex: cardCount,
+            x: 0,
+            y: 0,
+            zIndex:
+              thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].newIdx,
           };
-        } else {
-          temp = {
-            x: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
-              .privateX,
-            y: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
-              .privateY,
-            //zIndex: cardCount,
-          };
-        }
-      }
-      if (thisModelDeckType === 3) {
-        if (
+        } else if (
           thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isDraged ===
-            false &&
+            true &&
+          thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
+            .isInSpread === false
+        ) {
+          temp = {
+            x: 0,
+            y: 0,
+            zIndex:
+              thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].newIdx,
+          };
+        } else if (
+          thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isDraged ===
+            true &&
           thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
             .isInSpread === true
         ) {
           temp = {
-            x: celticPos[cardCount].x,
-            y: celticPos[cardCount].y,
-          };
-        } else {
-          temp = {
             x: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
               .privateX,
             y: thisModelFirstCardInfoArr[CurrentChildNumber][cardCount]
               .privateY,
+            zIndex: 0,
           };
         }
       }
-    } else if (thisModelDeckType === 0) {
-      // Free
+    } else {
+      // Extra는 덱타입(Three, Seven...)을 체크할 이유가 없음
+      // drag, isInSpreadZone check
       if (
         thisModelFirstCardInfoArr[CurrentChildNumber][cardCount].isDraged ===
           false &&
@@ -937,6 +990,7 @@ function MultiDragCard(props) {
         };
       }
     }
+
     return temp;
   };
   const onDoubleClickHandler = (e) => {

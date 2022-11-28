@@ -60,6 +60,7 @@ function MultiSpread() {
     <MultiSpreadWrapper ref={spreadRef}>
       {openControlBox === true ? <ControlBox /> : null}
       <MultiTop setOpenControlBox={setOpenControlBox} totalInfo={totalInfo} />
+      {multiManager.isOpenExtra === true ? <ControlBox /> : null}
       <MultiSpreadBox>
         <MultiModelTab />
         <MultiModelPath />

@@ -190,8 +190,10 @@ function MultiTop(props) {
 
   const onFoldHandler = () => {
     //console.log(isFold);
-    setIsFold((prev) => !prev);
-    setOpenControlBox((prev) => !prev);
+    if (multiManager.isOpenExtra === false) {
+      setIsFold((prev) => !prev);
+      setOpenControlBox((prev) => !prev);
+    }
   };
   const changeCurrentModel = (num) => {
     if (num === multiManager.CurrentModelNumber) {

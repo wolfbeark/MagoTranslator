@@ -575,6 +575,8 @@ function MakeSecondDefaultModel({
       newIdx: 0,
       privateX: 0,
       privateY: 0,
+      cardType: 0,
+      isExtraCard: false,
     };
     let rotateCardInfo = {
       // Decktype 3,
@@ -585,6 +587,8 @@ function MakeSecondDefaultModel({
       newIdx: 0,
       privateX: 0,
       privateY: 0,
+      cardType: 0,
+      isExtraCard: false,
     };
     let tempCardInfo2 = {
       // Decktype 0, free
@@ -595,6 +599,8 @@ function MakeSecondDefaultModel({
       newIdx: 0,
       privateX: 0,
       privateY: 0,
+      cardType: 0,
+      isExtraCard: false,
     };
     let tempTabInfo = {
       isOpen: false,

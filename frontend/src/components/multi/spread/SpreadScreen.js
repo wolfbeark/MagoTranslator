@@ -1,11 +1,18 @@
 /* eslint-disable */
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRecoilState } from "recoil";
 
 import { multiManagerAtom, multiModelAtom } from "../../../atom/multiAtom";
 import MultiDragCard from "../commons/MultiDragCard";
+import MakeExtra from "../make_extra/MakeExtra";
+
+const AllCenterDiv = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 const SpreadWrapper = styled(motion.div)`
   width: 100%;
   height: 100%;
@@ -71,6 +78,12 @@ const CardExtraDeck = styled.div`
   justify-content: center;
   align-items: center;
 `;
+const CreateExtraCard = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-image: url(${(props) => props.imgsrc});
+`;
 const CardCountBoard = styled.div`
   width: 100%;
   height: 20%;
@@ -134,18 +147,45 @@ const SpreadControlBtn = styled(motion.div)`
 `;
 
 const PreviewBtn = styled(motion.div)`
-  width: 50px;
-  height: 50px;
+  width: 5%;
+  height: ${(props) => `${props.widthinfo.width}px`};
   background-color: gray;
   position: absolute;
   bottom: 2%;
   left: 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PreviewBox = styled(motion.div)`
+  width: ${(props) => `${props.waitinginfo.width * 4}px`};
+  height: ${(props) => `${props.waitinginfo.height + 10}px`};
+  background-color: lemonchiffon;
+  position: absolute;
+  bottom: 2%;
+  left: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+const PreveiwImg = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-image: url(${(props) => props.imgsrc});
+`;
+const PreviewItem = styled(motion.div)`
+  width: ${(props) => `${props.waitinginfo.width}px`};
+  height: ${(props) => `${props.waitinginfo.height}px`};
+  background-color: ghostwhite;
 `;
 
 function SpreadScreen() {
   const totalRef = useRef();
   const waitingRef = useRef();
   const carpetRef = useRef();
+  const previewBtnRef = useRef();
   const [multiManager, setMultiManager] = useRecoilState(multiManagerAtom);
   const [multiModel, setMultiModel] = useRecoilState(multiModelAtom);
   const { CurrentModelNumber } = multiManager;
@@ -193,31 +233,10 @@ function SpreadScreen() {
     y: 0,
   });
   const [openError, setOpenError] = useState(false);
+  const [previewBtnWidth, setPreviewBtnWidth] = useState({ width: 0 });
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [activeMakeExtra, setActiveMakeExtra] = useState(false);
 
-  const onFlipHandler = () => {
-    let tempModel = JSON.parse(JSON.stringify(multiModel));
-    //console.log(tempModel[CurrentModelNumber].thisModelFirstCardInfoArr);
-    //console.log(tempModel[CurrentModelNumber].thisModelFirstNumArr);
-    for (
-      let i = 0;
-      i <
-      tempModel[CurrentModelNumber].thisModelFirstCardInfoArr[
-        CurrentChildNumber
-      ].length;
-      i++
-    ) {
-      if (
-        tempModel[CurrentModelNumber].thisModelFirstCardInfoArr[
-          CurrentChildNumber
-        ][i].isInSpread === true
-      ) {
-        tempModel[CurrentModelNumber].thisModelFirstCardInfoArr[
-          CurrentChildNumber
-        ][i].isFlip = true;
-      }
-    }
-    setMultiModel(tempModel);
-  };
   useEffect(() => {
     let tempTotal = totalRef.current.getBoundingClientRect();
     let tempInfo = waitingRef.current.getBoundingClientRect();
@@ -259,72 +278,168 @@ function SpreadScreen() {
     setCurrentChild(
       multiModel[multiManager.CurrentModelNumber].CurrentChildNumber
     );
-    //console.log(multiManager.CurrentModelNumber);
+    // if (activeMakeExtra === true) {
+    //   setActiveMakeExtra(false);
+    // }
   }, [multiManager.CurrentModelNumber, CurrentChildNumber]);
+  useEffect(() => {
+    if (multiModel[CurrentModelNumber].thisModelPreviewThree === true) {
+      let temp = previewBtnRef.current.getBoundingClientRect();
+      setPreviewBtnWidth({
+        width: temp.width,
+      });
+    }
+  }, [multiManager.CurrentModelNumber]);
 
+  const previewBtnStyle = () => {
+    let temp;
+    if (multiModel[CurrentModelNumber].thisModelPreviewThree === false) {
+      temp = {
+        display: "none",
+      };
+    } else {
+      temp = {
+        display: "flex",
+      };
+    }
+    return temp;
+  };
+  const onFlipHandler = () => {
+    let tempModel = JSON.parse(JSON.stringify(multiModel));
+    //console.log(tempModel[CurrentModelNumber].thisModelFirstCardInfoArr);
+    //console.log(tempModel[CurrentModelNumber].thisModelFirstNumArr);
+    for (
+      let i = 0;
+      i <
+      tempModel[CurrentModelNumber].thisModelFirstCardInfoArr[
+        CurrentChildNumber
+      ].length;
+      i++
+    ) {
+      if (
+        tempModel[CurrentModelNumber].thisModelFirstCardInfoArr[
+          CurrentChildNumber
+        ][i].isInSpread === true
+      ) {
+        tempModel[CurrentModelNumber].thisModelFirstCardInfoArr[
+          CurrentChildNumber
+        ][i].isFlip = true;
+      }
+    }
+    setMultiModel(tempModel);
+  };
+  const openControlBox = () => {
+    let tempManager = JSON.parse(JSON.stringify(multiManager));
+    tempManager.isOpenExtra = true;
+    setMultiManager(tempManager);
+  };
   return (
-    <SpreadWrapper ref={totalRef}>
-      <SpreadCarpet ref={carpetRef}></SpreadCarpet>
-      <SpreadControlBox>
-        <CardStorageContainer>
-          <CardStorage>
-            <CardWaitingZone>
-              <CardWaitingInBox ref={waitingRef}>
-                {multiModel[CurrentModelNumber].thisModelFirstCardInfoArr[
+    <>
+      <SpreadWrapper ref={totalRef}>
+        <SpreadCarpet ref={carpetRef}>
+          <PreviewBtn
+            ref={previewBtnRef}
+            widthinfo={previewBtnWidth}
+            style={previewBtnStyle()}
+            onClick={() => setPreviewOpen((prev) => !prev)}
+          >
+            Open
+          </PreviewBtn>
+          <AnimatePresence>
+            {previewOpen === true &&
+            multiModel[CurrentModelNumber].thisModelPreviewThree === true ? (
+              <PreviewBox waitinginfo={waitingInfo}>
+                {multiModel[CurrentModelNumber].thisModelPreviewThreeNumArr[
                   CurrentChildNumber
                 ].map((a, i) => {
                   return (
-                    <MultiDragCard
-                      key={`multiDragCard${i}${currentChild}${currentModel}`}
-                      waitingInfo={waitingInfo}
-                      carpetInfo={carpetInfo}
-                      totalInfo={totalInfo}
-                      count={i}
-                      refArr={refArr}
-                      openError={openError}
-                      setOpenError={setOpenError}
-                    />
+                    <PreviewItem
+                      key={`previewImg${i}${a}${CurrentModelNumber}${CurrentChildNumber}`}
+                      waitinginfo={waitingInfo}
+                    >
+                      <PreveiwImg
+                        imgsrc={`${process.env.PUBLIC_URL}/images/TarotDefault/Default${a}.png`}
+                        //alt={`${process.env.PUBLIC_URL}/images/cut1_s.png`}
+                      />
+                    </PreviewItem>
                   );
                 })}
-              </CardWaitingInBox>
-            </CardWaitingZone>
-            <CardExtraDeck>
-              {multiModel[CurrentModelNumber].remainCardCount[
-                CurrentChildNumber
-              ] === 0 ? (
-                <div>done</div>
-              ) : null}
-            </CardExtraDeck>
-          </CardStorage>
-        </CardStorageContainer>
-        <CardCountBoard>
-          <CardCountNotice>
-            <CountNoticeName>Total Count</CountNoticeName>
-            <CountNoticeValue>
-              {
-                multiModel[multiManager.CurrentModelNumber]
-                  .thisModelTotalCardCount
-              }
-            </CountNoticeValue>
-          </CardCountNotice>
-          <CardCountNotice>
-            <CountNoticeName>Remain Count</CountNoticeName>
-            <CountNoticeValue>
-              {
-                multiModel[multiManager.CurrentModelNumber].remainCardCount[
+              </PreviewBox>
+            ) : null}
+          </AnimatePresence>
+        </SpreadCarpet>
+        <SpreadControlBox>
+          <CardStorageContainer>
+            <CardStorage>
+              <CardWaitingZone>
+                <CardWaitingInBox ref={waitingRef}>
+                  {multiModel[CurrentModelNumber].thisModelFirstCardInfoArr[
+                    CurrentChildNumber
+                  ].map((a, i) => {
+                    return (
+                      <MultiDragCard
+                        key={`multiDragCard${i}${currentChild}${currentModel}`}
+                        waitingInfo={waitingInfo}
+                        carpetInfo={carpetInfo}
+                        totalInfo={totalInfo}
+                        count={i}
+                        refArr={refArr}
+                        openError={openError}
+                        setOpenError={setOpenError}
+                      />
+                    );
+                  })}
+                </CardWaitingInBox>
+              </CardWaitingZone>
+              <CardExtraDeck>
+                {multiModel[CurrentModelNumber].remainCardCount[
                   CurrentChildNumber
-                ]
-              }
-            </CountNoticeValue>
-          </CardCountNotice>
-        </CardCountBoard>
-        <SpreadControlBtnBox>
-          <SpreadControlBtnWrapper>
-            <SpreadControlBtn onClick={onFlipHandler}>Flip</SpreadControlBtn>
-          </SpreadControlBtnWrapper>
-        </SpreadControlBtnBox>
-      </SpreadControlBox>
-    </SpreadWrapper>
+                ] === 0 ? (
+                  <CreateExtraCard
+                    imgsrc={`${process.env.PUBLIC_URL}/images/cut1_s.png`}
+                    onClick={() => {
+                      setActiveMakeExtra((prev) => !prev);
+                      openControlBox();
+                    }}
+                  />
+                ) : null}
+              </CardExtraDeck>
+            </CardStorage>
+          </CardStorageContainer>
+          <CardCountBoard>
+            <CardCountNotice>
+              <CountNoticeName>Total Count</CountNoticeName>
+              <CountNoticeValue>
+                {
+                  multiModel[multiManager.CurrentModelNumber]
+                    .thisModelTotalCardCount
+                }
+              </CountNoticeValue>
+            </CardCountNotice>
+            <CardCountNotice>
+              <CountNoticeName>Remain Count</CountNoticeName>
+              <CountNoticeValue>
+                {
+                  multiModel[multiManager.CurrentModelNumber].remainCardCount[
+                    CurrentChildNumber
+                  ]
+                }
+              </CountNoticeValue>
+            </CardCountNotice>
+          </CardCountBoard>
+          <SpreadControlBtnBox>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn onClick={onFlipHandler}>Flip</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+          </SpreadControlBtnBox>
+        </SpreadControlBox>
+      </SpreadWrapper>
+      {activeMakeExtra === true ? (
+        <MakeExtra setActiveMakeExtra={setActiveMakeExtra} />
+      ) : (
+        false
+      )}
+    </>
   );
 }
 
