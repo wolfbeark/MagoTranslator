@@ -6,6 +6,7 @@ import { useRecoilValue, useRecoilState } from "recoil";
 
 import { multiManagerAtom, multiModelAtom } from "../../../atom/multiAtom";
 import SecondDragCard from "../commons/SecondDragCard";
+import SecondMakeExtra from "../make_extra/make_extra_second/SecondMakeExtra";
 
 const SpreadWrapper = styled(motion.div)`
   width: 100%;
@@ -134,6 +135,12 @@ const SpreadControlBtn = styled(motion.div)`
   align-items: center;
   background-color: cornflowerblue;
 `;
+const CreateExtraCard = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-image: url(${(props) => props.imgsrc});
+`;
 
 function SecondSpreadScreen() {
   const totalRef = useRef();
@@ -193,6 +200,7 @@ function SecondSpreadScreen() {
   });
   const [refArr, setRefArr] = useState([totalRef, carpetRef]);
   const [openError, setOpenError] = useState(false);
+  const [activeMakeExtra, setActiveMakeExtra] = useState(false);
 
   const onFlipHandler = () => {
     let tempModel = JSON.parse(JSON.stringify(multiModel));
@@ -216,7 +224,11 @@ function SecondSpreadScreen() {
     }
     setMultiModel(tempModel);
   };
-
+  const openControlBox = () => {
+    let tempManager = JSON.parse(JSON.stringify(multiManager));
+    tempManager.isOpenExtra = true;
+    setMultiManager(tempManager);
+  };
   useEffect(() => {
     let tempTotal = totalRef.current.getBoundingClientRect();
     let tempInfo = waitingRef.current.getBoundingClientRect();
@@ -264,63 +276,83 @@ function SecondSpreadScreen() {
   ]);
 
   return (
-    <SpreadWrapper ref={totalRef}>
-      <SpreadCarpet ref={carpetRef}></SpreadCarpet>
-      <SpreadControlBox>
-        <CardStorageContainer>
-          <CardStorage>
-            <CardWaitingZone>
-              <CardWaitingInBox ref={waitingRef}>
-                {SecondSpread[CurrentChildNumber].thisModelSecondCardInfoArr[
+    <>
+      <SpreadWrapper ref={totalRef}>
+        <SpreadCarpet ref={carpetRef}></SpreadCarpet>
+        <SpreadControlBox>
+          <CardStorageContainer>
+            <CardStorage>
+              <CardWaitingZone>
+                <CardWaitingInBox ref={waitingRef}>
+                  {SecondSpread[CurrentChildNumber].thisModelSecondCardInfoArr[
+                    CurrentSelectNum
+                  ].map((a, i) => {
+                    return (
+                      <SecondDragCard
+                        key={`multiDragCard${i}${currentChild}${currentModel}${currentSelectNum}`}
+                        waitingInfo={waitingInfo}
+                        carpetInfo={carpetInfo}
+                        totalInfo={totalInfo}
+                        count={i}
+                        refArr={refArr}
+                        openError={openError}
+                        setOpenError={setOpenError}
+                      />
+                    );
+                  })}
+                </CardWaitingInBox>
+              </CardWaitingZone>
+              <CardExtraDeck>
+                {SecondSpread[CurrentChildNumber].remainCardCount[
                   CurrentSelectNum
-                ].map((a, i) => {
-                  return (
-                    <SecondDragCard
-                      key={`multiDragCard${i}${currentChild}${currentModel}${currentSelectNum}`}
-                      waitingInfo={waitingInfo}
-                      carpetInfo={carpetInfo}
-                      totalInfo={totalInfo}
-                      count={i}
-                      refArr={refArr}
-                      openError={openError}
-                      setOpenError={setOpenError}
-                    />
-                  );
-                })}
-              </CardWaitingInBox>
-            </CardWaitingZone>
-            <CardExtraDeck></CardExtraDeck>
-          </CardStorage>
-        </CardStorageContainer>
-        <CardCountBoard>
-          <CardCountNotice>
-            <CountNoticeName>Total Count</CountNoticeName>
-            <CountNoticeValue>
-              {
-                SecondSpread[CurrentChildNumber].thisModelTotalCardCount[
+                ] === 0 ? (
+                  <CreateExtraCard
+                    imgsrc={`${process.env.PUBLIC_URL}/images/cut1_s.png`}
+                    onClick={() => {
+                      setActiveMakeExtra((prev) => !prev);
+                      openControlBox();
+                    }}
+                  />
+                ) : null}
+              </CardExtraDeck>
+            </CardStorage>
+          </CardStorageContainer>
+          <CardCountBoard>
+            <CardCountNotice>
+              <CountNoticeName>Total Count</CountNoticeName>
+              <CountNoticeValue>
+                {SecondSpread[CurrentChildNumber].firstCardCount[
                   CurrentSelectNum
-                ]
-              }
-            </CountNoticeValue>
-          </CardCountNotice>
-          <CardCountNotice>
-            <CountNoticeName>Remain Count</CountNoticeName>
-            <CountNoticeValue>
-              {
-                SecondSpread[CurrentChildNumber].remainCardCount[
-                  CurrentSelectNum
-                ]
-              }
-            </CountNoticeValue>
-          </CardCountNotice>
-        </CardCountBoard>
-        <SpreadControlBtnBox>
-          <SpreadControlBtnWrapper>
-            <SpreadControlBtn onClick={onFlipHandler}>Flip</SpreadControlBtn>
-          </SpreadControlBtnWrapper>
-        </SpreadControlBtnBox>
-      </SpreadControlBox>
-    </SpreadWrapper>
+                ] +
+                  SecondSpread[CurrentChildNumber].extraCardCount[
+                    CurrentSelectNum
+                  ]}
+              </CountNoticeValue>
+            </CardCountNotice>
+            <CardCountNotice>
+              <CountNoticeName>Remain Count</CountNoticeName>
+              <CountNoticeValue>
+                {
+                  SecondSpread[CurrentChildNumber].remainCardCount[
+                    CurrentSelectNum
+                  ]
+                }
+              </CountNoticeValue>
+            </CardCountNotice>
+          </CardCountBoard>
+          <SpreadControlBtnBox>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn onClick={onFlipHandler}>Flip</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+          </SpreadControlBtnBox>
+        </SpreadControlBox>
+      </SpreadWrapper>
+      {activeMakeExtra === true ? (
+        <SecondMakeExtra setActiveMakeExtra={setActiveMakeExtra} />
+      ) : (
+        false
+      )}
+    </>
   );
 }
 

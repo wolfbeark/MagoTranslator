@@ -1,16 +1,12 @@
 /* eslint-disable */
+
 import React, { useState } from "react";
 import styled from "styled-components";
-import { AnimatePresence, motion } from "framer-motion";
-import PokerExtraMake from "./PokerExtraMake";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRecoilState } from "recoil";
-import { multiManagerAtom } from "../../../atom/multiAtom";
 
-const AllCenterDiv = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+import { AllCenterDiv } from "../../../../CommonComponents";
+import SecondPokerExtraMake from "./SecondPokerExtraMake";
 
 const OptionalBlock = styled(AllCenterDiv)`
   width: 100%;
@@ -22,7 +18,6 @@ const OptionalBlock = styled(AllCenterDiv)`
   top: 0;
   z-index: 500;
 `;
-
 const ExtraMakeQuestion = styled(AllCenterDiv)`
   width: 50%;
   height: 60%;
@@ -50,18 +45,13 @@ const CancelExtraBtn = styled(AllCenterDiv)`
   bottom: -12%;
   right: 0;
 `;
-
 const MakeExtraPannel = styled(AllCenterDiv)`
   width: 70%;
   height: 90%;
   background-color: azure;
 `;
-
-function MakeExtra(props) {
+function SecondMakeExtra(props) {
   const setActiveMakeExtra = props.setActiveMakeExtra;
-
-  const [multiManager, setMultiManager] = useRecoilState(multiManagerAtom);
-
   const [extraType, setExtraType] = useState(5);
   const SelectExtraDeckArr = ["Tarot", "Lenormand", "IChing", "Poker"];
 
@@ -70,45 +60,44 @@ function MakeExtra(props) {
     tempManager.isOpenExtra = false;
     setMultiManager(tempManager);
   };
+
   return (
     <>
       <OptionalBlock>
         {extraType === 5 ? (
-          <>
-            <AnimatePresence>
-              <ExtraMakeQuestion>
-                <AnimatePresence>
-                  {extraType === 5
-                    ? SelectExtraDeckArr.map((a, i) => {
-                        return (
-                          <SelectExtraTypeBtn
-                            key={`selectExtraType${i}${a}`}
-                            onClick={() => setExtraType(i)}
-                          >
-                            {a}
-                          </SelectExtraTypeBtn>
-                        );
-                      })
-                    : null}
-                </AnimatePresence>
-                <CancelExtraBtn
-                  onClick={() => {
-                    setActiveMakeExtra(false);
-                    closeControlBox();
-                  }}
-                >
-                  Back
-                </CancelExtraBtn>
-              </ExtraMakeQuestion>
-            </AnimatePresence>
-          </>
+          <AnimatePresence>
+            <ExtraMakeQuestion>
+              <AnimatePresence>
+                {extraType === 5
+                  ? SelectExtraDeckArr.map((a, i) => {
+                      return (
+                        <SelectExtraTypeBtn
+                          key={`selectExtraSecondType${i}${a}`}
+                          onClick={() => setExtraType(i)}
+                        >
+                          {a}
+                        </SelectExtraTypeBtn>
+                      );
+                    })
+                  : null}
+              </AnimatePresence>
+              <CancelExtraBtn
+                onClick={() => {
+                  setActiveMakeExtra(false);
+                  closeControlBox();
+                }}
+              >
+                Back
+              </CancelExtraBtn>
+            </ExtraMakeQuestion>
+          </AnimatePresence>
         ) : (
           <>
             <AnimatePresence>
               <MakeExtraPannel>
                 <AnimatePresence>
                   {extraType === 0 ? (
-                    <PokerExtraMake
+                    <SecondPokerExtraMake
                       setActiveMakeExtra={setActiveMakeExtra}
                       setExtraType={setExtraType}
                     />
@@ -123,4 +112,4 @@ function MakeExtra(props) {
   );
 }
 
-export default MakeExtra;
+export default SecondMakeExtra;

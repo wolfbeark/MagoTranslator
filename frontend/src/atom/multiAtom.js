@@ -9,8 +9,8 @@ let secondSpreadItem = {
   modelType: false, // false default, true custom
   thisModelDeckType: 1,
   thisModelTotalCardCount: 0,
-  firstCardCount: 0,
-  extraCardCount: 0,
+  firstCardCount: [0, 0, 0, 0, 0],
+  extraCardCount: [0, 0, 0, 0, 0],
   thisModelPreviewThree: false,
   thisModelPreviewThreeNumArr: [],
   thisModelSecondCardInfoArr: [],
@@ -63,6 +63,7 @@ export const secondManagerAtom = atom({
     DefaultNameArr: ["Star", "Square", "Triangle", "Circle", "Heart"],
     DefaultCardCount: 3,
     DefaultPreviewThree: true,
+    isOpenExtra: false,
   },
 });
 
@@ -77,8 +78,8 @@ export const multiModelAtom = atom({
       modelType: false, // false = Default, true = Custom
       thisModelDeckType: 1,
       thisModelTotalCardCount: 0,
-      firstCardCount: 0,
-      extraCardCount: 0,
+      firstCardCount: [0, 0, 0, 0, 0],
+      extraCardCount: [0, 0, 0, 0, 0],
       remainCardCount: [],
       thisModelPreviewThree: true,
       // Preview 3장 번호 배열 필요
@@ -93,12 +94,12 @@ export const multiModelAtom = atom({
         [{ isOpen: false, isCreated: false, isLongHeight: false }],
       ],
       SelectedTabItemNumArr: [],
-      Item0TabNum: 0, // 마지막에 열려있던 CurrentChildNumber
-      //
-      Item1TabNum: 0,
-      Item2TabNum: 0,
-      Item3TabNum: 0,
-      Item4TabNum: 0,
+      // Item0TabNum: 0, // 마지막에 열려있던 CurrentChildNumber
+      // //
+      // Item1TabNum: 0,
+      // Item2TabNum: 0,
+      // Item3TabNum: 0,
+      // Item4TabNum: 0,
       SecondSpreadModelArr: [],
 
       SecondSpread: [
@@ -138,8 +139,8 @@ export const multiModelPrefabAtom = atom({
     modelType: false, // false = Default, true = Custom
     thisModelDeckType: 1,
     thisModelTotalCardCount: 0,
-    firstCardCount: 0,
-    extraCardCount: 0,
+    firstCardCount: [0, 0, 0, 0, 0],
+    extraCardCount: [0, 0, 0, 0, 0],
     remainCardCount: [],
     thisModelPreviewThree: true,
     // Preview 3장 번호 배열 필요

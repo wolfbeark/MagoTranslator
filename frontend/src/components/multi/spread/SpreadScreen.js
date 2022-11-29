@@ -410,10 +410,12 @@ function SpreadScreen() {
             <CardCountNotice>
               <CountNoticeName>Total Count</CountNoticeName>
               <CountNoticeValue>
-                {
-                  multiModel[multiManager.CurrentModelNumber]
-                    .thisModelTotalCardCount
-                }
+                {multiModel[multiManager.CurrentModelNumber].firstCardCount[
+                  CurrentChildNumber
+                ] +
+                  multiModel[multiManager.CurrentModelNumber].extraCardCount[
+                    CurrentChildNumber
+                  ]}
               </CountNoticeValue>
             </CardCountNotice>
             <CardCountNotice>

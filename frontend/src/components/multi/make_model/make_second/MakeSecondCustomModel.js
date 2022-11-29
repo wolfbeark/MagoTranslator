@@ -235,197 +235,12 @@ function MakeSecondCustomModel({
       return true;
     }
   };
-  const makeNewCustomModel = () => {
-    let checkCount = errorChecker();
-    let tempManager = JSON.parse(JSON.stringify(multiManager));
-    let tempMultiModel = JSON.parse(JSON.stringify(multiModel));
-    let tempObj = {};
-    // CardInfoArr
-    let tempCardInfo = {
-      // Decktype 1,2
-      isDraged: false,
-      isFlip: false,
-      isInSpread: true,
-      isRotate: false,
-      newIdx: 0,
-      privateX: 0,
-      privateY: 0,
-    };
-    let rotateCardInfo = {
-      // Decktype 3,
-      isDraged: false,
-      isFlip: false,
-      isInSpread: true,
-      isRotate: true,
-      newIdx: 0,
-      privateX: 0,
-      privateY: 0,
-    };
-    let tempCardInfo2 = {
-      // Decktype 0, free
-      isDraged: false,
-      isFlip: false,
-      isInSpread: false,
-      isRotate: false,
-      newIdx: 0,
-      privateX: 0,
-      privateY: 0,
-    };
-    if (checkCount === false) {
-      console.log("fail");
-      return;
-    } else {
-      tempObj = JSON.parse(JSON.stringify(multiModelPrefab));
-      tempObj.modelDefined = true;
-      tempObj.modelType = true;
-      tempObj.thisModelDeckType = deckType;
-      tempObj.thisModelTotalCardCount = new Array(5);
-      tempObj.firstCardCount = cardCount;
-      tempObj.thisModelPreviewThree = activeThree;
 
-      //TotalCardCount
-      for (let i = 0; i < 5; i++) {
-        tempObj.thisModelTotalCardCount[i] = cardCount;
-      }
-
-      //ModelName
-      if (customModelName !== "") {
-        tempObj.modelName = customModelName;
-      } else {
-        tempObj.modelName = `Untitle - ${CurrentModelNumber}`;
-      }
-      //List Name
-      let tempNameArr = new Array(5);
-      tempNameArr[0] = nameValue0;
-      tempNameArr[1] = nameValue1;
-      tempNameArr[2] = nameValue2;
-      tempNameArr[3] = nameValue3;
-      tempNameArr[4] = nameValue4;
-      for (let i = 0; i < 5; i++) {
-        if (tempNameArr[i] === "") {
-          tempNameArr[i] = localStorage.getItem(`DefaultListName${i + 1}`);
-        }
-      }
-      tempObj.thisModelChildNameArr = [...tempNameArr];
-
-      // Preview Check
-      if (activeThree === true) {
-        let tempArr = new Array(5);
-        for (let i = 0; i < 5; i++) {
-          let tempArr2 = new Array(3);
-          for (let k = 0; k < 3; k++) {
-            let tempNum = Math.floor(Math.random() * 78);
-            tempArr2[k] = tempNum;
-            for (let l = 0; l < k; l++) {
-              if (tempArr2[k] === tempArr2[l]) {
-                k--;
-                break;
-              }
-            }
-          }
-          tempArr[i] = tempArr2;
-        }
-        tempObj.thisModelPreviewThreeNumArr = [...tempArr];
-      }
-
-      // Ran Num Arr
-      let ranNumArr = new Array(5);
-      for (let i = 0; i < 5; i++) {
-        let tempRanNumArr = new Array(cardCount);
-        for (let a = 0; a < tempRanNumArr.length; a++) {
-          let tempNum = Math.floor(Math.random() * 78);
-          tempRanNumArr[a] = tempNum;
-          for (let b = 0; b < a; b++) {
-            if (tempRanNumArr[b] === tempRanNumArr[a]) {
-              a--;
-              break;
-            }
-          }
-        }
-        ranNumArr[i] = tempRanNumArr;
-      }
-      tempObj.thisModelFirstNumArr = [...ranNumArr];
-
-      // Card Info Arr
-      let tempCardInfoArr = new Array(5);
-      if (deckType === 3) {
-        // Celtic
-        for (let b = 0; b < 5; b++) {
-          let tempArr = new Array(11);
-          for (let c = 0; c < tempArr.length; c++) {
-            if (c === 2) {
-              tempArr[c] = rotateCardInfo;
-            } else {
-              tempArr[c] = tempCardInfo;
-            }
-          }
-          tempCardInfoArr[b] = tempArr;
-        }
-      } else if (deckType !== 0 && deckType !== 3) {
-        // Three, Seven
-        for (let b = 0; b < 5; b++) {
-          let tempArr = new Array(deckType === 1 ? 3 : 7);
-          for (let c = 0; c < tempArr.length; c++) {
-            tempArr[c] = tempCardInfo;
-          }
-          tempCardInfoArr[b] = tempArr;
-        }
-      } else if (deckType === 0) {
-        // Free
-        for (let b = 0; b < 5; b++) {
-          //console.log("sdf : ", cardCount);
-          let tempArr = new Array(cardCount);
-          for (let c = 0; c < tempArr.length; c++) {
-            let tempObj = { ...tempCardInfo2 };
-            tempObj.newIdx = tempArr.length - c;
-            tempArr[c] = tempObj;
-          }
-          tempCardInfoArr[b] = tempArr;
-        }
-        //console.log(tempCardInfoArr);
-      }
-      tempObj.thisModelFirstCardInfoArr = [...tempCardInfoArr];
-
-      // remain Counter
-      if (deckType !== 0) {
-        let tempRemainCountArr = new Array(5);
-        for (let i = 0; i < 5; i++) {
-          tempRemainCountArr[i] = 0;
-        }
-        tempObj.remainCardCount = [...tempRemainCountArr];
-      } else {
-        let tempRemainCountArr = new Array(5);
-        for (let i = 0; i < 5; i++) {
-          tempRemainCountArr[i] = cardCount;
-        }
-        tempObj.remainCardCount = [...tempRemainCountArr];
-      }
-
-      if (customModelName !== "") {
-        tempManager.MultiModelNameArr[CurrentModelNumber] = customModelName;
-      } else {
-        tempManager.MultiModelNameArr[
-          CurrentModelNumber
-        ] = `Untitle - ${CurrentModelNumber}`;
-      }
-      if (tempManager.ModelExist === false) {
-        tempManager.ModelExist = true;
-      }
-
-      tempMultiModel[tempManager.CurrentModelNumber] = { ...tempObj };
-      console.log(tempMultiModel);
-      if (tempManager.ExistModelCount === 0) {
-        tempManager.ExistModelCount++;
-      }
-      setMultiManager(tempManager);
-      setMultiModel(tempMultiModel);
-    } // else 끝부분
-    //console.log(multiModel);
-  };
   const makeNewCustomSecond = () => {
     let checkCount = errorChecker();
     let tempMultiModel = JSON.parse(JSON.stringify(multiModel));
     let tempObj;
+    let _cardCount = Number(cardCount);
     let tempCardInfo = {
       // Decktype 1,2
       isDraged: false,
@@ -517,7 +332,7 @@ function MakeSecondCustomModel({
       // Set Random Number
       let ranNumArr = new Array(5);
       for (let ri = 0; ri < 5; ri++) {
-        let tempRanNumArr = new Array(cardCount);
+        let tempRanNumArr = new Array(_cardCount);
         for (let ra = 0; ra < tempRanNumArr.length; ra++) {
           let tempNum = Math.floor(Math.random() * 78);
           tempRanNumArr[ra] = tempNum;
@@ -533,12 +348,18 @@ function MakeSecondCustomModel({
       tempObj.SecondRanNumArr = [...ranNumArr];
       // thisModelDeckType // free three seven celtic
       //tempObj.thisModelTotalCardCount = cardCount;
+
       //TotalCardCount
       for (let i = 0; i < 5; i++) {
-        tempObj.thisModelTotalCardCount[i] = cardCount;
+        tempObj.thisModelTotalCardCount[i] = _cardCount;
       }
 
-      tempObj.firstCardCount = cardCount;
+      let _firstCardCount = new Array(5);
+      let _extraCardCount = new Array(5);
+      _firstCardCount.fill(_cardCount);
+      _extraCardCount.fill(0);
+      tempObj.firstCardCount = _firstCardCount;
+      tempObj.extraCardCount = _extraCardCount;
 
       // Card Info Arr
       let tempCardInfoArr = new Array(5);
@@ -565,7 +386,7 @@ function MakeSecondCustomModel({
         }
       } else if (deckType === 0) {
         for (let b = 0; b < 5; b++) {
-          let tempArr = new Array(cardCount);
+          let tempArr = new Array(_cardCount);
           for (let c = 0; c < tempArr.length; c++) {
             let tempObj = { ...tempCardInfo2 };
             tempObj.newIdx = tempArr.length - c;
@@ -586,7 +407,7 @@ function MakeSecondCustomModel({
       } else {
         let tempRemainCountArr = new Array(5);
         for (let i = 0; i < 5; i++) {
-          tempRemainCountArr[i] = cardCount;
+          tempRemainCountArr[i] = _cardCount;
         }
         tempObj.remainCardCount = [...tempRemainCountArr];
       }

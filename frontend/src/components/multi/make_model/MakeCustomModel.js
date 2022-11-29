@@ -178,6 +178,7 @@ function MakeCustomModel({
   const [multiModel, setMultiModel] = useRecoilState(multiModelAtom);
   const multiModelPrefab = useRecoilValue(multiModelPrefabAtom);
   const { CurrentModelNumber } = multiManager;
+  const { CurrrentChildNumber } = multiModel[CurrentModelNumber];
   const deckTypeCountArr = ["", 3, 7, 11];
   const deckNameArr = ["Free", "Three", "Seven", "Celtic"];
   const [customModelName, setCustomModelName] = useState("");
@@ -286,7 +287,7 @@ function MakeCustomModel({
       tempObj.modelType = true;
       tempObj.thisModelDeckType = deckType;
       tempObj.thisModelTotalCardCount = cardCount;
-      tempObj.firstCardCount = cardCount;
+      //tempObj.firstCardCount[CurrrentChildNumber] = Number(cardCount);
       tempObj.thisModelPreviewThree = activeThree;
 
       //ModelName
@@ -387,19 +388,26 @@ function MakeCustomModel({
       }
       tempObj.thisModelFirstCardInfoArr = [...tempCardInfoArr];
 
-      // remain Counter
+      // remain Counter, firstCardCount
       if (deckType !== 0) {
         let tempRemainCountArr = new Array(5);
+        let tempFirstCardCountArr = new Array(5);
         for (let i = 0; i < 5; i++) {
           tempRemainCountArr[i] = 0;
+          tempFirstCardCountArr[i] = Number(cardCount);
         }
         tempObj.remainCardCount = [...tempRemainCountArr];
+        tempObj.firstCardCount = [...tempFirstCardCountArr];
       } else {
         let tempRemainCountArr = new Array(5);
+        let tempFirstCardCountArr = new Array(5);
+
         for (let i = 0; i < 5; i++) {
-          tempRemainCountArr[i] = cardCount;
+          tempRemainCountArr[i] = Number(cardCount);
+          tempFirstCardCountArr[i] = Number(cardCount);
         }
         tempObj.remainCardCount = [...tempRemainCountArr];
+        tempObj.firstCardCount = [...tempFirstCardCountArr];
       }
 
       if (customModelName !== "") {

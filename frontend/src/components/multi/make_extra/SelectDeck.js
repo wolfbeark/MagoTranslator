@@ -268,14 +268,6 @@ function SelectDeck(props) {
         }
       } else if (isClickedTotal === true) {
         if (isClicked === false) {
-          // if (tempSelectCount === 0) {
-          //   // count name info
-          //   tempSelectCount++;
-          //   tempListNameArr.push(MinusDeckNameArr[type]);
-          //   tempInfoArr[type].isClicked = true;
-          //   tempInfoArr[type].setIsClicked(true);
-          // }
-          //else if (tempSelectCount !== 0) {
           tempSelectCount++;
           tempListNameArr.push(MinusDeckNameArr[type]);
           tempInfoArr[type].isClicked = true;
@@ -514,7 +506,7 @@ function SelectDeck(props) {
         }
       }
     }
-    console.log(tempSelectCount);
+    //console.log(tempSelectCount);
     setSelectCount(tempSelectCount);
     setSelectDeckArr([...tempListNameArr]);
     setDeckControlArr([...tempInfoArr]);
