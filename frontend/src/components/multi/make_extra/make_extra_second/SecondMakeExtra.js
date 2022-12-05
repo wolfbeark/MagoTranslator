@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 
 import { AllCenterDiv } from "../../../../CommonComponents";
 import SecondPokerExtraMake from "./SecondPokerExtraMake";
+import { multiManagerAtom } from "../../../../atom/multiAtom";
 
 const OptionalBlock = styled(AllCenterDiv)`
   width: 100%;
@@ -52,6 +53,8 @@ const MakeExtraPannel = styled(AllCenterDiv)`
 `;
 function SecondMakeExtra(props) {
   const setActiveMakeExtra = props.setActiveMakeExtra;
+
+  const [multiManager, setMultiManager] = useRecoilState(multiManagerAtom);
   const [extraType, setExtraType] = useState(5);
   const SelectExtraDeckArr = ["Tarot", "Lenormand", "IChing", "Poker"];
 

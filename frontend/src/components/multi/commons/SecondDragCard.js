@@ -53,12 +53,16 @@ function SecondDragCard(props) {
   const openError = props.openError;
   const setOpenError = props.setOpenError;
 
-  const multiManager = useRecoilValue(multiManagerAtom);
+  const [multiManager, setMultiManager] = useRecoilState(multiManagerAtom);
   const [multiModel, setMultiModel] = useRecoilState(multiModelAtom);
   const { CurrentModelNumber } = multiManager;
   const { CurrentChildNumber, SecondSpread } = multiModel[CurrentModelNumber];
-  const { CurrentSelectNum, thisModelSecondCardInfoArr, thisModelDeckType } =
-    SecondSpread[CurrentChildNumber];
+  const {
+    CurrentSelectNum,
+    SecondRanNumArr,
+    thisModelSecondCardInfoArr,
+    thisModelDeckType,
+  } = SecondSpread[CurrentChildNumber];
 
   const [errorPos, setErrorPos] = useState({ x: 0, y: 0 });
   const [cardInfo, setCardInfo] = useState({
@@ -73,15 +77,7 @@ function SecondDragCard(props) {
   const [privateFlip, setPrivateFlip] = useState(
     thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isFlip
   );
-  // const [modelNumber, setModelNumber] = useState(
-  //   multiManager.CurrentModelNumber
-  // );
-  // const [childNumber, setChildNumber] = useState(
-  //   multiModel[multiManager.CurrentModelNumber].CurrentChildNumber
-  // );
-  // const [selectNumber, setSelectNumber] = useState(
-  //   multiModel[modelNumber].SecondSpread[childNumber].CurrentSelectNum
-  // );
+  const [imgRoute, setImgRoute] = useState("/images/cut1_s.png");
 
   const carpetCenterX =
     -(carpetInfo.width / 2) -
@@ -183,6 +179,7 @@ function SecondDragCard(props) {
       y: carpetCenterY - carpetInfo.height * 0.36,
     },
   ];
+  const imgRouteArr = ["/images/TarotDefault/Default"];
 
   const onDragStartHandler = (e) => {
     let alpha = waitingInfo.x - (e.pageX - e.offsetX);
@@ -193,15 +190,29 @@ function SecondDragCard(props) {
     });
     let tempObj = JSON.parse(JSON.stringify(multiModel));
     let tempArr = JSON.parse(JSON.stringify(thisModelSecondCardInfoArr));
-
+    let tempNumArr = JSON.parse(JSON.stringify(SecondRanNumArr));
     tempArr[CurrentSelectNum][cardCount].isDraged = true;
     tempArr[CurrentSelectNum][cardCount].privateX = -alpha;
     tempArr[CurrentSelectNum][cardCount].privateY = -beta;
     tempObj[CurrentModelNumber].SecondSpread[
       CurrentChildNumber
     ].thisModelSecondCardInfoArr = tempArr;
+    if (privateFlip === true) {
+      let _cardType = tempArr[CurrentSelectNum][cardCount].cardType;
+      let _imgNum = tempNumArr[CurrentSelectNum][cardCount];
+      let _zoomRoute = `${imgRouteArr[_cardType]}${_imgNum}.png`;
+      let _zoomName = multiManager.cardNameTotalArr[_cardType][_imgNum];
+      let tempManager = JSON.parse(JSON.stringify(multiManager));
+      tempManager.isFindOrZoom = true;
+      tempManager.zoomImgRoute = _zoomRoute;
+      tempManager.zoomCardName = _zoomName;
+      tempManager.findOrZoomSelectedNum = _imgNum;
 
-    setMultiModel(tempObj);
+      setMultiModel(tempObj);
+      setMultiManager(tempManager);
+    } else {
+      setMultiModel(tempObj);
+    }
   };
 
   const onDragHandler = (e) => {
@@ -577,74 +588,122 @@ function SecondDragCard(props) {
   };
   const styleItem = () => {
     let temp;
-    if (thisModelDeckType !== 0) {
-      if (thisModelDeckType === 1) {
-        if (
-          thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
-            false &&
-          thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isInSpread ===
-            true
-          // if cardCount >= firstCardCount
-          // if cardType // Tarot LenorMand... 나중에 추가
-        ) {
-          if (privateRotate === false) {
+    if (
+      thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isExtraCard ===
+      false
+    ) {
+      if (thisModelDeckType !== 0) {
+        if (thisModelDeckType === 1) {
+          if (
+            thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
+              false &&
+            thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+              .isInSpread === true
+            // if cardCount >= firstCardCount
+            // if cardType // Tarot LenorMand... 나중에 추가
+          ) {
+            if (privateRotate === false) {
+              temp = {
+                x: threePos[cardCount].x,
+                y: threePos[cardCount].y,
+              };
+            } else {
+              temp = {
+                x: threePos[cardCount].x,
+                y: threePos[cardCount].y,
+              };
+            }
+          } else {
             temp = {
-              x: threePos[cardCount].x,
-              y: threePos[cardCount].y,
+              x: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+                .privateX,
+              y: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+                .privateY,
+            };
+          }
+        }
+        if (thisModelDeckType === 2) {
+          if (
+            thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
+              false &&
+            thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+              .isInSpread === true
+          ) {
+            temp = {
+              x: sevenPos[cardCount].x,
+              y: sevenPos[cardCount].y,
+              //zIndex: cardCount,
             };
           } else {
             temp = {
-              x: threePos[cardCount].x,
-              y: threePos[cardCount].y,
+              x: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+                .privateX,
+              y: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+                .privateY,
+              //zIndex: cardCount,
             };
           }
-        } else {
-          temp = {
-            x: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].privateX,
-            y: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].privateY,
-          };
         }
-      }
-      if (thisModelDeckType === 2) {
+        if (thisModelDeckType === 3) {
+          if (
+            thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
+              false &&
+            thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+              .isInSpread === true
+          ) {
+            temp = {
+              x: celticPos[cardCount].x,
+              y: celticPos[cardCount].y,
+            };
+          } else {
+            temp = {
+              x: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+                .privateX,
+              y: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount]
+                .privateY,
+            };
+          }
+        }
+      } else if (thisModelDeckType === 0) {
+        // Free
         if (
           thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
             false &&
           thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isInSpread ===
-            true
+            false
         ) {
           temp = {
-            x: sevenPos[cardCount].x,
-            y: sevenPos[cardCount].y,
-            //zIndex: cardCount,
+            x: 0,
+            y: 0,
+            zIndex:
+              thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].newIdx,
           };
-        } else {
-          temp = {
-            x: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].privateX,
-            y: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].privateY,
-            //zIndex: cardCount,
-          };
-        }
-      }
-      if (thisModelDeckType === 3) {
-        if (
+        } else if (
           thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
-            false &&
+            true &&
+          thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isInSpread ===
+            false
+        ) {
+          temp = {
+            x: 0,
+            y: 0,
+            zIndex:
+              thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].newIdx,
+          };
+        } else if (
+          thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
+            true &&
           thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isInSpread ===
             true
         ) {
           temp = {
-            x: celticPos[cardCount].x,
-            y: celticPos[cardCount].y,
-          };
-        } else {
-          temp = {
             x: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].privateX,
             y: thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].privateY,
+            zIndex: 0,
           };
         }
       }
-    } else if (thisModelDeckType === 0) {
-      // Free
+    } else {
       if (
         thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isDraged ===
           false &&
@@ -682,6 +741,7 @@ function SecondDragCard(props) {
         };
       }
     }
+
     return temp;
   };
   useEffect(() => {
@@ -711,7 +771,31 @@ function SecondDragCard(props) {
       setPrivateFlip(true);
     }
   }, [thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].isFlip]);
+  useEffect(() => {
+    let flag = thisModelSecondCardInfoArr[CurrentSelectNum][cardCount].cardType;
+    switch (flag) {
+      case 0:
+        setImgRoute(
+          //`/images/ArcanaOfCard/DefaultImages/TotalImages/Default${dragCardNumArr[_count]}.png` // thiscount 원래 _count였음
+          //`/images/TarotDefault/Default${multiModel[CurrentModelNumber].thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`
+          `/images/TarotDefault/Default${SecondRanNumArr[CurrentSelectNum][cardCount]}.png`
+        );
 
+        break;
+      case 1:
+        setImgRoute(
+          `/images/Lenormand/DefaultImages/Default_Lenormand${dragCardNumArr[_count]}.png`
+        );
+        break;
+      case 2:
+        setImgRoute(`/images/IChing/iching${dragCardNumArr[_count]}.png`);
+        break;
+      case 3:
+        break;
+      default:
+        break;
+    }
+  }, []);
   // useEffect(() => {
   //   setModelNumber(multiManager.CurrentModelNumber);
   // }, [multiManager.CurrentModelNumber]);
@@ -779,7 +863,7 @@ function SecondDragCard(props) {
           imgsrc={
             privateFlip === false
               ? `${process.env.PUBLIC_URL}/images/cut1_s.png`
-              : `${process.env.PUBLIC_URL}/images/TarotDefault/Default${multiModel[CurrentModelNumber].SecondSpread[CurrentChildNumber].SecondRanNumArr[CurrentSelectNum][cardCount]}.png`
+              : `${process.env.PUBLIC_URL}${imgRoute}`
           }
         >
           <img alt="" />

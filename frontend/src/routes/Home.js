@@ -8,8 +8,12 @@ import { multiManagerAtom, secondManagerAtom } from "../atom/multiAtom";
 
 const HomeWrapper = styled.div`
   width: 100%;
-  height: ${(props) => (props.test === "true" ? "200vh" : "100vh")};
+  //height: ${(props) => (props.test === "true" ? "200vh" : "110vh")};
+  height: 110vh;
   position: relative;
+  overflow: hidden;
+  overflow-y: hidden;
+  position: fixed;
 `;
 const backgroundAni = keyframes`
     0%{background-position:0% 50%}
@@ -18,7 +22,7 @@ const backgroundAni = keyframes`
 `;
 const HomeContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background: linear-gradient(
     120deg,
     ${(props) => props.theme.gra1},
@@ -31,6 +35,7 @@ const HomeContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 
 function Home() {

@@ -65,6 +65,7 @@ const GlobalStyle = createGlobalStyle`
   -webkit-user-select: none;
   user-select: none;
   }
+  
 `;
 
 root.render(

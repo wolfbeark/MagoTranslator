@@ -60,9 +60,16 @@ function SecondSelectDeck(props) {
   const deckName = props.deckName;
   const type = props.deckType;
   const imgNum = props.imgNum;
-
+  const selectCount = props.selectCount;
+  const setSelectCount = props.setSelectCount;
+  const isClickedTotal = props.isClickedTotal;
+  const selectDeckArr = props.selectDeckArr;
+  const setSelectDeckArr = props.setSelectDeckArr;
   const setDeckControlArr = props.setDeckControlArr;
   let deckControlArr = props.deckControlArr;
+  const isMinorTotalClicked = props.isMinorTotalClicked;
+  const setIsMinorTotalClicked = props.setIsMinorTotalClicked;
+  const stringArr = props.stringArr;
 
   const [isClicked, setIsClicked] = useState(false);
 
@@ -100,6 +107,409 @@ function SecondSelectDeck(props) {
     tempArr[type] = temp;
     setDeckControlArr(tempArr);
   }, []);
+  const deckClickHandler = (num) => {
+    let tempListNameArr = [...selectDeckArr];
+    let tempSelectCount = selectCount;
+    let tempInfoArr = [...deckControlArr];
+    let flag = tempInfoArr[num].isClicked;
+
+    let minorControlNameArr = [];
+
+    if (type !== 5) {
+      // Minor가 아님
+      if (isClickedTotal === false) {
+        if (isClicked === false) {
+          if (tempSelectCount === 0) {
+            // 최초
+            tempSelectCount++;
+            tempListNameArr[0] = DeckNameArr[num];
+            tempInfoArr[type].isClicked = true;
+            tempInfoArr[type].setIsClicked(true);
+          } else if (tempSelectCount !== 0) {
+            tempSelectCount++;
+            if (type === 0) {
+              tempListNameArr.push(DeckNameArr[type]);
+              //tempInfoArr[type].isClicked = true;
+              //tempInfoArr[type].setIsClicked(true);
+            } else if (type !== 0) {
+              let checker = false;
+              for (let i = 0; i < tempListNameArr.length; i++) {
+                if (tempListNameArr[i] === DeckNameArr[5]) {
+                  checker = true;
+                  break;
+                }
+              }
+
+              if (checker === false) {
+                // Minor가 없으면
+
+                tempListNameArr.push(DeckNameArr[type]);
+                //tempInfoArr[type].isClicked = true;
+                //tempInfoArr[type].setIsClicked(true);
+              } else if (checker === true) {
+                // Minor가 있으면
+                for (let i = 0; i < tempListNameArr.length; i++) {
+                  if (tempListNameArr[i] === DeckNameArr[5]) {
+                    tempListNameArr.splice(i, 1);
+                    tempSelectCount--;
+                    tempInfoArr[5].isClicked = false;
+                    tempInfoArr[5].setIsClicked(false);
+                    for (let j = 0; j < tempInfoArr.length; j++) {
+                      if (
+                        j === 0 ||
+                        j === 5
+                        //|| j === i
+                      ) {
+                        continue;
+                      } else if (j === i) {
+                        // tempInfoArr[j].isClicked = true;
+                        // tempInfoArr[j].setIsClicked(true);
+                        continue;
+                      } else {
+                        tempInfoArr[j].isClicked = false;
+                        tempInfoArr[j].setIsClicked(false);
+                      }
+                    }
+                    break;
+                  }
+                }
+                tempListNameArr.push(DeckNameArr[type]);
+              }
+            }
+            tempInfoArr[type].isClicked = true;
+            tempInfoArr[type].setIsClicked(true);
+          }
+        } else if (isClicked === true) {
+          if (tempSelectCount === 1) {
+            tempSelectCount--;
+            tempListNameArr[0] = "Select Deck Or Total";
+            tempInfoArr[type].isClicked = false;
+            tempInfoArr[type].setIsClicked(false);
+            if (type !== 0) {
+              if (tempInfoArr[5].isClicked === true) {
+                tempInfoArr[5].isClicked = false;
+                tempInfoArr[5].setIsClicked(false);
+                for (let i = 0; i < tempListNameArr.length; i++) {
+                  if (tempListNameArr[i] === DeckNameArr[5]) {
+                    tempListNameArr.splice(i, 1);
+                    break;
+                  }
+                }
+                for (let i = 0; i < tempInfoArr.length; i++) {
+                  if (i === 0 || i === 5 || i === type) {
+                    continue;
+                  } else {
+                    tempInfoArr[i].isClicked = false;
+                    tempInfoArr[i].setIsClicked(false);
+                  }
+                }
+                tempSelectCount++;
+                tempInfoArr[type].isClicked = true;
+                tempInfoArr[type].setIsClicked(true);
+                for (let i = 0; i < tempListNameArr.length; i++) {
+                  if (tempListNameArr[i] === "Select Deck Or Total") {
+                    tempListNameArr.splice(i, 1);
+                    break;
+                  }
+                }
+                tempListNameArr.push(DeckNameArr[type]);
+              }
+            }
+          } else if (tempSelectCount !== 1) {
+            // name count info
+            tempSelectCount--;
+            if (type === 0) {
+              for (let i = 0; i < tempListNameArr.length; i++) {
+                if (tempListNameArr[i] === DeckNameArr[type]) {
+                  tempListNameArr.splice(i, 1);
+                  break;
+                }
+              }
+              tempInfoArr[type].isClicked = false;
+              tempInfoArr[type].setIsClicked(false);
+            } else if (type !== 0) {
+              // 마이너들
+              console.log(tempInfoArr[5].isClicked);
+              if (tempInfoArr[5].isClicked === false) {
+                for (let i = 0; i < tempListNameArr.length; i++) {
+                  if (tempListNameArr[i] === DeckNameArr[type]) {
+                    tempListNameArr.splice(i, 1);
+                    break;
+                  }
+                }
+                tempInfoArr[type].isClicked = false;
+                tempInfoArr[type].setIsClicked(false);
+              } else if (tempInfoArr[5].isClicked === true) {
+                tempInfoArr[5].isClicked = false;
+                tempInfoArr[5].setIsClicked(false);
+                for (let i = 0; i < tempListNameArr.length; i++) {
+                  if (tempListNameArr[i] === DeckNameArr[5]) {
+                    tempListNameArr.splice(i, 1);
+                  }
+                }
+                tempListNameArr.push(DeckNameArr[type]);
+                tempSelectCount++;
+                tempInfoArr[type].isClicked = true;
+                tempInfoArr[type].setIsClicked(true);
+
+                for (let i = 0; i < tempInfoArr.length; i++) {
+                  if (i === 0 || i === 5 || i === type) {
+                    continue;
+                  } else {
+                    tempInfoArr[i].isClicked = false;
+                    tempInfoArr[i].setIsClicked(false);
+                  }
+                }
+              }
+              // 다른 마이너들 풀어줘야함
+            }
+          }
+        }
+      } else if (isClickedTotal === true) {
+        if (isClicked === false) {
+          tempSelectCount++;
+          tempListNameArr.push(MinusDeckNameArr[type]);
+          tempInfoArr[type].isClicked = true;
+          tempInfoArr[type].setIsClicked(true);
+          if (type !== 0 && type !== 5) {
+            if (tempInfoArr[5].isClicked === true) {
+              tempSelectCount--;
+              for (let i = 0; i < tempListNameArr.length; i++) {
+                if (tempListNameArr[i] === MinusDeckNameArr[5]) {
+                  tempListNameArr.splice(i, 1);
+                }
+              }
+              tempInfoArr[5].isClicked = false;
+              tempInfoArr[5].setIsClicked(false);
+
+              for (let i = 0; i < tempInfoArr.length; i++) {
+                if (i === 0 || i === 5 || i === type) {
+                  continue;
+                }
+                tempInfoArr[i].isClicked = false;
+                tempInfoArr[i].setIsClicked(false);
+              }
+            }
+          }
+          //}
+        } else if (isClicked === true) {
+          tempSelectCount--;
+          if (type === 0) {
+            for (let i = 0; i < tempListNameArr.length; i++) {
+              if (tempListNameArr[i] === MinusDeckNameArr[type]) {
+                tempListNameArr.splice(i, 1);
+                break;
+              }
+              tempInfoArr[type].isClicked = false;
+              tempInfoArr[type].setIsClicked(false);
+            }
+          } else if (type !== 0 && type !== 5) {
+            if (tempInfoArr[5].isClicked === false) {
+              for (let i = 0; i < tempListNameArr.length; i++) {
+                if (tempListNameArr[i] === MinusDeckNameArr[type]) {
+                  tempListNameArr.splice(i, 1);
+                  break;
+                }
+                tempInfoArr[type].isClicked = false;
+                tempInfoArr[type].setIsClicked(false);
+              }
+            } else if (tempInfoArr[5].isClicked === true) {
+              tempInfoArr[type].isClicked = true;
+              tempInfoArr[type].setIsClicked(true);
+              tempSelectCount++;
+              tempListNameArr.push(MinusDeckNameArr[type]);
+
+              for (let i = 0; i < tempListNameArr.length; i++) {
+                if (tempListNameArr[i] === MinusDeckNameArr[5]) {
+                  tempListNameArr.splice(i, 1);
+                  break;
+                }
+              }
+              tempInfoArr[5].isClicked = false;
+              tempInfoArr[5].setIsClicked(false);
+              for (let i = 0; i < tempInfoArr.length; i++) {
+                if (i === 0 || i === 5 || i === type) {
+                  continue;
+                }
+                tempInfoArr[i].isClicked = false;
+                tempInfoArr[i].setIsClicked(false);
+              }
+            }
+          }
+        }
+      }
+    } else if (type === 5) {
+      // Minor임
+      let tempCount = 0;
+      if (isClickedTotal === false) {
+        if (isClicked === false) {
+          // 클릭된 적 없음
+          if (tempSelectCount === 0) {
+            // 최초
+            tempSelectCount++;
+            tempListNameArr[0] = DeckNameArr[num];
+            tempInfoArr[type].isClicked = true;
+            tempInfoArr[type].setIsClicked(true);
+            // 다른 마이너들 제어해야함
+            for (let i = 0; i < tempInfoArr.length; i++) {
+              if (i === 0 || i === 5) {
+                continue;
+              } else {
+                tempInfoArr[i].isClicked = true;
+                tempInfoArr[i].setIsClicked(true);
+              }
+            }
+          } else {
+            // 최초가 아님
+            // 리스트 이름 제거
+            tempSelectCount++;
+            //tempListNameArr.push(DeckNameArr[type]);
+            tempInfoArr[type].isClicked = true;
+            tempInfoArr[type].setIsClicked(true);
+
+            for (let i = 0; i < tempListNameArr.length; i++) {
+              if (
+                tempListNameArr[i] === DeckNameArr[0] ||
+                tempListNameArr[i] === DeckNameArr[5]
+              ) {
+                // 메이저와 마이너면 넘어가
+                continue;
+              } else {
+                // 다른 마이너들 리스트에서 제거 카운트
+                tempCount++;
+              }
+            }
+            if (tempInfoArr[0].isClicked === true) {
+              minorControlNameArr.push(DeckNameArr[0]);
+              minorControlNameArr.push(DeckNameArr[5]);
+            } else {
+              minorControlNameArr.push(DeckNameArr[5]);
+            }
+            tempListNameArr = [...minorControlNameArr];
+
+            // 리스트 인포 제거
+            for (let i = 0; i < tempInfoArr.length; i++) {
+              if (i === 0 || i === 5) {
+                continue;
+              } else {
+                tempInfoArr[i].isClicked = true;
+                tempInfoArr[i].setIsClicked(true);
+              }
+            }
+            // count
+            tempSelectCount -= tempCount;
+            // console.log(tempSelectCount);
+            // console.log(typeof tempSelectCount);
+            // console.log(typeof tempCount);
+          }
+        } else if (isClicked === true) {
+          if (tempSelectCount === 1) {
+            tempSelectCount--;
+            tempListNameArr[0] = "Select Deck Or Total";
+            tempInfoArr[type].isClicked = false;
+            tempInfoArr[type].setIsClicked(false);
+            for (let i = 0; i < tempInfoArr.length; i++) {
+              if (i === 0 || i === 5) {
+                continue;
+              } else {
+                tempInfoArr[i].isClicked = false;
+                tempInfoArr[i].setIsClicked(false);
+              }
+            }
+          } else if (tempSelectCount !== 1) {
+            tempSelectCount--;
+
+            for (let i = 0; i < tempListNameArr.length; i++) {
+              if (tempListNameArr[i] === DeckNameArr[type]) {
+                tempListNameArr.splice(i, 1);
+                break;
+              }
+            }
+
+            tempInfoArr[type].isClicked = false;
+            tempInfoArr[type].setIsClicked(false);
+            for (let i = 0; i < tempInfoArr.length; i++) {
+              if (i === 0 || i === 5) {
+                continue;
+              } else {
+                tempInfoArr[i].isClicked = false;
+                tempInfoArr[i].setIsClicked(false);
+              }
+            }
+          }
+        }
+      } else if (isClickedTotal === true) {
+        if (isClicked === false) {
+          tempSelectCount++;
+          //tempListNameArr.push(MinusDeckNameArr[type]);
+          tempInfoArr[type].isClicked = true;
+          tempInfoArr[type].setIsClicked(true);
+
+          // count check
+          //console.log(tempListNameArr.length);
+          for (let i = 0; i < tempListNameArr.length; i++) {
+            console.log("check1");
+            if (
+              tempListNameArr[i] === MinusDeckNameArr[0] ||
+              tempListNameArr[i] === MinusDeckNameArr[5] ||
+              tempListNameArr[i] === stringArr[1]
+            ) {
+              continue;
+            } else {
+              tempCount++;
+            }
+          }
+          tempSelectCount -= tempCount;
+
+          // info
+          for (let i = 0; i < tempInfoArr.length; i++) {
+            //console.log("check2");
+            if (i === 0 || i === 5) {
+              continue;
+            }
+            tempInfoArr[i].isClicked = true;
+            tempInfoArr[i].setIsClicked(true);
+          }
+
+          // name
+          if (tempInfoArr[0].isClicked === true) {
+            minorControlNameArr.push(stringArr[1]);
+            minorControlNameArr.push(MinusDeckNameArr[0]);
+            minorControlNameArr.push(MinusDeckNameArr[5]);
+          } else {
+            minorControlNameArr.push(stringArr[1]);
+            minorControlNameArr.push(MinusDeckNameArr[5]);
+          }
+
+          tempListNameArr = [...minorControlNameArr];
+        } else if (isClicked === true) {
+          tempSelectCount--;
+          // info
+          for (let i = 0; i < tempInfoArr.length; i++) {
+            //console.log("check2");
+            if (i === 0 || i === 5) {
+              continue;
+            }
+            tempInfoArr[i].isClicked = false;
+            tempInfoArr[i].setIsClicked(false);
+          }
+
+          // name
+          for (let i = 0; i < tempListNameArr.length; i++) {
+            if (tempListNameArr[i] === MinusDeckNameArr[5]) {
+              tempListNameArr.splice(i, 1);
+            }
+          }
+          tempInfoArr[5].isClicked = false;
+          tempInfoArr[5].setIsClicked(false);
+        }
+      }
+    }
+    //console.log(tempSelectCount);
+    setSelectCount(tempSelectCount);
+    setSelectDeckArr([...tempListNameArr]);
+    setDeckControlArr([...tempInfoArr]);
+  };
   return (
     <DeckContainer>
       <ImageContainer>

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import PokerExtraMake from "./PokerExtraMake";
 import { useRecoilState } from "recoil";
 import { multiManagerAtom } from "../../../atom/multiAtom";
+import IChingExtraMake from "./IChingExtraMake";
 
 const AllCenterDiv = styled(motion.div)`
   display: flex;
@@ -109,6 +110,12 @@ function MakeExtra(props) {
                 <AnimatePresence>
                   {extraType === 0 ? (
                     <PokerExtraMake
+                      setActiveMakeExtra={setActiveMakeExtra}
+                      setExtraType={setExtraType}
+                    />
+                  ) : null}
+                  {extraType === 2 ? (
+                    <IChingExtraMake
                       setActiveMakeExtra={setActiveMakeExtra}
                       setExtraType={setExtraType}
                     />

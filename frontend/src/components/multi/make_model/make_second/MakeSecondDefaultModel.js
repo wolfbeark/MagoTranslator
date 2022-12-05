@@ -566,6 +566,7 @@ function MakeSecondDefaultModel({
     let checkCount = errorChecker();
     let tempMultiModel = JSON.parse(JSON.stringify(multiModel));
     let tempObj;
+    let _cardCount = Number(cardCount);
     let tempCardInfo = {
       // Decktype 1,2
       isDraged: false,
@@ -657,7 +658,7 @@ function MakeSecondDefaultModel({
       // Set Random Number
       let ranNumArr = new Array(5);
       for (let ri = 0; ri < 5; ri++) {
-        let tempRanNumArr = new Array(cardCount);
+        let tempRanNumArr = new Array(_cardCount);
         for (let ra = 0; ra < tempRanNumArr.length; ra++) {
           let tempNum = Math.floor(Math.random() * 78);
           tempRanNumArr[ra] = tempNum;
@@ -675,10 +676,16 @@ function MakeSecondDefaultModel({
       //tempObj.thisModelTotalCardCount = cardCount;
       //TotalCardCount
       for (let i = 0; i < 5; i++) {
-        tempObj.thisModelTotalCardCount[i] = cardCount;
+        tempObj.thisModelTotalCardCount[i] = _cardCount;
       }
 
-      tempObj.firstCardCount = cardCount;
+      //tempObj.firstCardCount = cardCount;
+      let _firstCardCount = new Array(5);
+      let _extraCardCount = new Array(5);
+      _firstCardCount.fill(_cardCount);
+      _extraCardCount.fill(0);
+      tempObj.firstCardCount = _firstCardCount;
+      tempObj.extraCardCount = _extraCardCount;
 
       // Card Info Arr
       let tempCardInfoArr = new Array(5);
@@ -726,7 +733,7 @@ function MakeSecondDefaultModel({
       } else {
         let tempRemainCountArr = new Array(5);
         for (let i = 0; i < 5; i++) {
-          tempRemainCountArr[i] = cardCount;
+          tempRemainCountArr[i] = _cardCount;
         }
         tempObj.remainCardCount = [...tempRemainCountArr];
       }

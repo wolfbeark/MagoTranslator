@@ -1,12 +1,14 @@
 /* eslint-disable */
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRecoilValue, useRecoilState } from "recoil";
 
 import { multiManagerAtom, multiModelAtom } from "../../../atom/multiAtom";
 import SecondDragCard from "../commons/SecondDragCard";
 import SecondMakeExtra from "../make_extra/make_extra_second/SecondMakeExtra";
+import MultiFindControl from "../find/MultiFindControl";
+import MultiFind from "../find/MultiFind";
 
 const SpreadWrapper = styled(motion.div)`
   width: 100%;
@@ -29,6 +31,7 @@ const SpreadCarpet = styled(motion.div)`
   width: 84%;
   height: 100%;
   background-color: rebeccapurple;
+  position: relative;
 `;
 const SpreadControlBox = styled(motion.div)`
   width: 15%;
@@ -117,6 +120,11 @@ const SpreadControlBtnBox = styled.div`
   width: 100%;
   height: 60%;
   background-color: fuchsia;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 1%;
 `;
 const SpreadControlBtnWrapper = styled(motion.div)`
   width: 100%;
@@ -142,10 +150,46 @@ const CreateExtraCard = styled(motion.div)`
   background-image: url(${(props) => props.imgsrc});
 `;
 
+const PreviewBtn = styled(motion.div)`
+  width: 5%;
+  height: ${(props) => `${props.widthinfo.width}px`};
+  background-color: gray;
+  position: absolute;
+  bottom: 2%;
+  left: 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const PreviewBox = styled(motion.div)`
+  width: ${(props) => `${props.waitinginfo.width * 4}px`};
+  height: ${(props) => `${props.waitinginfo.height + 10}px`};
+  background-color: lemonchiffon;
+  position: absolute;
+  bottom: 2%;
+  left: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+const PreviewImg = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-image: url(${(props) => props.imgsrc});
+`;
+const PreviewItem = styled(motion.div)`
+  width: ${(props) => `${props.waitinginfo.width}px`};
+  height: ${(props) => `${props.waitinginfo.height}px`};
+  background-color: ghostwhite;
+`;
+
 function SecondSpreadScreen() {
   const totalRef = useRef();
   const waitingRef = useRef();
   const carpetRef = useRef();
+  const previewBtnRef = useRef();
 
   const [multiManager, setMultiManager] = useRecoilState(multiManagerAtom);
   const [multiModel, setMultiModel] = useRecoilState(multiModelAtom);
@@ -202,6 +246,14 @@ function SecondSpreadScreen() {
   const [openError, setOpenError] = useState(false);
   const [activeMakeExtra, setActiveMakeExtra] = useState(false);
 
+  // Preview
+  const [previewBtnWidth, setPreviewBtnWidth] = useState({ width: 0 });
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  // Find
+  const [isOpenFind, setIsOpenFind] = useState(false);
+  const [isOpenFindOption, setIsOpenFindOption] = useState(false);
+
   const onFlipHandler = () => {
     let tempModel = JSON.parse(JSON.stringify(multiModel));
     //console.log(tempModel[CurrentModelNumber].thisModelFirstCardInfoArr);
@@ -227,6 +279,28 @@ function SecondSpreadScreen() {
   const openControlBox = () => {
     let tempManager = JSON.parse(JSON.stringify(multiManager));
     tempManager.isOpenExtra = true;
+    setMultiManager(tempManager);
+  };
+
+  const previewBtnStyle = () => {
+    let temp;
+    if (
+      multiModel[CurrentModelNumber].SecondSpread[CurrentChildNumber]
+        .thisModelPreviewThree === false
+    ) {
+      temp = {
+        display: "none",
+      };
+    } else {
+      temp = {
+        display: "flex",
+      };
+    }
+    return temp;
+  };
+  const closeControlBox = () => {
+    let tempManager = JSON.parse(JSON.stringify(multiManager));
+    tempManager.isOpenExtra = false;
     setMultiManager(tempManager);
   };
   useEffect(() => {
@@ -274,11 +348,60 @@ function SecondSpreadScreen() {
     multiModel[CurrentModelNumber].CurrentChildNumber,
     SecondSpread[CurrentChildNumber].CurrentSelectNum,
   ]);
+  useEffect(() => {
+    if (
+      multiModel[CurrentModelNumber].SecondSpread[CurrentChildNumber]
+        .thisModelPreviewThree === true
+    ) {
+      let temp = previewBtnRef.current.getBoundingClientRect();
+      setPreviewBtnWidth({
+        width: temp.width,
+      });
+    }
+  }, [multiModel[multiManager.CurrentModelNumber].CurrentChildNumber]);
 
   return (
     <>
       <SpreadWrapper ref={totalRef}>
-        <SpreadCarpet ref={carpetRef}></SpreadCarpet>
+        <SpreadCarpet ref={carpetRef}>
+          <PreviewBtn
+            ref={previewBtnRef}
+            widthinfo={previewBtnWidth}
+            style={previewBtnStyle()}
+            onClick={() => setPreviewOpen((prev) => !prev)}
+          >
+            Open
+          </PreviewBtn>
+          <AnimatePresence>
+            {previewOpen === true &&
+            multiModel[CurrentModelNumber].SecondSpread[CurrentChildNumber]
+              .thisModelPreviewThree === true ? (
+              <PreviewBox key={`secondPreview`} waitinginfo={waitingInfo}>
+                {multiModel[CurrentModelNumber].SecondSpread[
+                  CurrentChildNumber
+                ].thisModelPreviewThreeNumArr[CurrentSelectNum].map((a, i) => {
+                  return (
+                    <PreviewItem
+                      key={`secondPreviewImg${i}${a}${CurrentModelNumber}${CurrentChildNumber}${CurrentSelectNum}`}
+                      waitinginfo={waitingInfo}
+                    >
+                      <PreviewImg
+                        imgsrc={`${process.env.PUBLIC_URL}/images/TarotDefault/Default${a}.png`}
+                      />
+                    </PreviewItem>
+                  );
+                })}
+              </PreviewBox>
+            ) : null}
+            {isOpenFind && (
+              <MultiFind
+                refArr={refArr}
+                openControlBox={openControlBox}
+                setIsOpenFindOption={setIsOpenFindOption}
+              ></MultiFind>
+            )}
+          </AnimatePresence>
+        </SpreadCarpet>
         <SpreadControlBox>
           <CardStorageContainer>
             <CardStorage>
@@ -342,7 +465,25 @@ function SecondSpreadScreen() {
           </CardCountBoard>
           <SpreadControlBtnBox>
             <SpreadControlBtnWrapper>
+              <SpreadControlBtn>Restart</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn>Hide</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn
+                onClick={() => {
+                  setIsOpenFind((prev) => !prev);
+                }}
+              >
+                Find
+              </SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
               <SpreadControlBtn onClick={onFlipHandler}>Flip</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn>Capture</SpreadControlBtn>
             </SpreadControlBtnWrapper>
           </SpreadControlBtnBox>
         </SpreadControlBox>
@@ -351,6 +492,12 @@ function SecondSpreadScreen() {
         <SecondMakeExtra setActiveMakeExtra={setActiveMakeExtra} />
       ) : (
         false
+      )}
+      {isOpenFindOption && (
+        <MultiFindControl
+          closeControlBox={closeControlBox}
+          setIsOpenFindOption={setIsOpenFindOption}
+        />
       )}
     </>
   );

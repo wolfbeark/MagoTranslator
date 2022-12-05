@@ -54,7 +54,7 @@ function MultiDragCard(props) {
   const openError = props.openError;
   const setOpenError = props.setOpenError;
 
-  const multiManager = useRecoilValue(multiManagerAtom);
+  const [multiManager, setMultiManager] = useRecoilState(multiManagerAtom);
   const [multiModel, setMultiModel] = useRecoilState(multiModelAtom);
   const { CurrentModelNumber } = multiManager;
   const {
@@ -180,6 +180,11 @@ function MultiDragCard(props) {
       y: carpetCenterY - carpetInfo.height * 0.36,
     },
   ];
+  const imgRouteArr = [
+    "/images/TarotDefault/Default",
+    "",
+    "/images/IChingDefault/iching",
+  ];
 
   useEffect(() => {
     let tempObj = cardRef.current.getBoundingClientRect();
@@ -227,7 +232,9 @@ function MultiDragCard(props) {
         );
         break;
       case 2:
-        setImgRoute(`/images/IChing/iching${dragCardNumArr[_count]}.png`);
+        setImgRoute(
+          `/images/IChingDefault/iching${thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`
+        );
         break;
       case 3:
         break;
@@ -253,8 +260,27 @@ function MultiDragCard(props) {
     tempObj[CurrentModelNumber].thisModelFirstCardInfoArr[CurrentChildNumber][
       cardCount
     ].privateY = -beta;
-
-    setMultiModel(tempObj);
+    if (privateFlip === true) {
+      let _cardType =
+        tempObj[CurrentModelNumber].thisModelFirstCardInfoArr[
+          CurrentChildNumber
+        ][cardCount].cardType;
+      let _imgNum =
+        tempObj[CurrentModelNumber].thisModelFirstNumArr[CurrentChildNumber][
+          cardCount
+        ];
+      let _zoomRoute = `${imgRouteArr[_cardType]}${tempObj[CurrentModelNumber].thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`;
+      let _zoomName = multiManager.cardNameTotalArr[_cardType][_imgNum];
+      let tempManager = JSON.parse(JSON.stringify(multiManager));
+      tempManager.isFindOrZoom = true;
+      tempManager.zoomImgRoute = _zoomRoute;
+      tempManager.zoomCardName = _zoomName;
+      tempManager.findOrZoomSelectedNum = _imgNum;
+      setMultiModel(tempObj);
+      setMultiManager(tempManager);
+    } else {
+      setMultiModel(tempObj);
+    }
   };
 
   const onDragTestHandler = (e) => {
@@ -1074,7 +1100,8 @@ function MultiDragCard(props) {
           imgsrc={
             privateFlip === false
               ? `${process.env.PUBLIC_URL}/images/cut1_s.png`
-              : `${process.env.PUBLIC_URL}/images/TarotDefault/Default${multiModel[CurrentModelNumber].thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`
+              : //              : `${process.env.PUBLIC_URL}/images/TarotDefault/Default${multiModel[CurrentModelNumber].thisModelFirstNumArr[CurrentChildNumber][cardCount]}.png`
+                `${process.env.PUBLIC_URL}${imgRoute}`
           }
         >
           <img privaterotate={privateRotate === true ? "true" : "false"} />

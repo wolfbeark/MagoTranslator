@@ -11,8 +11,10 @@ import { multiManagerAtom, secondManagerAtom } from "../atom/multiAtom";
 const MultiWrapper = styled.div`
   width: 100%;
   //height: ${(props) => (props.longheight === "true" ? "200vh" : "100vh")};
-  height: 100vh;
+  height: 110vh;
   background-color: red;
+  overflow-y: hidden;
+  position: fixed;
 `;
 const backgroundAni = keyframes`
     0%{background-position:0% 50%}
@@ -21,7 +23,7 @@ const backgroundAni = keyframes`
 `;
 const MultiBackgroundBox = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background: linear-gradient(
     120deg,
     ${(props) => props.theme.gra1},
@@ -227,7 +229,7 @@ function Multi() {
       <MultiBackgroundBox>
         <MultiContainer ref={mainContainerRef}>
           <MultiHeader>
-            <button>Test</button>
+            <button onClick={() => console.log(multiManager)}>Test</button>
           </MultiHeader>
           <MultiMainContainer>
             {/* <MultiLeft /> */}

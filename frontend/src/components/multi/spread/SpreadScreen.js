@@ -7,6 +7,8 @@ import { useRecoilState } from "recoil";
 import { multiManagerAtom, multiModelAtom } from "../../../atom/multiAtom";
 import MultiDragCard from "../commons/MultiDragCard";
 import MakeExtra from "../make_extra/MakeExtra";
+import MultiFind from "../find/MultiFind";
+import MultiFindControl from "../find/MultiFindControl";
 
 const AllCenterDiv = styled(motion.div)`
   display: flex;
@@ -26,6 +28,7 @@ const SpreadCarpet = styled(motion.div)`
   width: 84%;
   height: 100%;
   background-color: rebeccapurple;
+  position: relative;
 `;
 const SpreadControlBox = styled(motion.div)`
   width: 15%;
@@ -169,7 +172,7 @@ const PreviewBox = styled(motion.div)`
   align-items: center;
   justify-content: space-evenly;
 `;
-const PreveiwImg = styled(motion.div)`
+const PreviewImg = styled(motion.div)`
   width: 100%;
   height: 100%;
   background-size: 100% 100%;
@@ -236,6 +239,10 @@ function SpreadScreen() {
   const [previewBtnWidth, setPreviewBtnWidth] = useState({ width: 0 });
   const [previewOpen, setPreviewOpen] = useState(false);
   const [activeMakeExtra, setActiveMakeExtra] = useState(false);
+
+  // Find
+  const [isOpenFind, setIsOpenFind] = useState(false);
+  const [isOpenFindOption, setIsOpenFindOption] = useState(false);
 
   useEffect(() => {
     let tempTotal = totalRef.current.getBoundingClientRect();
@@ -333,6 +340,11 @@ function SpreadScreen() {
     tempManager.isOpenExtra = true;
     setMultiManager(tempManager);
   };
+  const closeControlBox = () => {
+    let tempManager = JSON.parse(JSON.stringify(multiManager));
+    tempManager.isOpenExtra = false;
+    setMultiManager(tempManager);
+  };
   return (
     <>
       <SpreadWrapper ref={totalRef}>
@@ -348,7 +360,7 @@ function SpreadScreen() {
           <AnimatePresence>
             {previewOpen === true &&
             multiModel[CurrentModelNumber].thisModelPreviewThree === true ? (
-              <PreviewBox waitinginfo={waitingInfo}>
+              <PreviewBox key={`multiPreview`} waitinginfo={waitingInfo}>
                 {multiModel[CurrentModelNumber].thisModelPreviewThreeNumArr[
                   CurrentChildNumber
                 ].map((a, i) => {
@@ -357,7 +369,7 @@ function SpreadScreen() {
                       key={`previewImg${i}${a}${CurrentModelNumber}${CurrentChildNumber}`}
                       waitinginfo={waitingInfo}
                     >
-                      <PreveiwImg
+                      <PreviewImg
                         imgsrc={`${process.env.PUBLIC_URL}/images/TarotDefault/Default${a}.png`}
                         //alt={`${process.env.PUBLIC_URL}/images/cut1_s.png`}
                       />
@@ -366,6 +378,13 @@ function SpreadScreen() {
                 })}
               </PreviewBox>
             ) : null}
+            {isOpenFind && (
+              <MultiFind
+                refArr={refArr}
+                openControlBox={openControlBox}
+                setIsOpenFindOption={setIsOpenFindOption}
+              ></MultiFind>
+            )}
           </AnimatePresence>
         </SpreadCarpet>
         <SpreadControlBox>
@@ -431,7 +450,25 @@ function SpreadScreen() {
           </CardCountBoard>
           <SpreadControlBtnBox>
             <SpreadControlBtnWrapper>
+              <SpreadControlBtn>Restart</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn>Hide</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn
+                onClick={() => {
+                  setIsOpenFind((prev) => !prev);
+                }}
+              >
+                Find
+              </SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
               <SpreadControlBtn onClick={onFlipHandler}>Flip</SpreadControlBtn>
+            </SpreadControlBtnWrapper>
+            <SpreadControlBtnWrapper>
+              <SpreadControlBtn>Capture</SpreadControlBtn>
             </SpreadControlBtnWrapper>
           </SpreadControlBtnBox>
         </SpreadControlBox>
@@ -440,6 +477,12 @@ function SpreadScreen() {
         <MakeExtra setActiveMakeExtra={setActiveMakeExtra} />
       ) : (
         false
+      )}
+      {isOpenFindOption && (
+        <MultiFindControl
+          closeControlBox={closeControlBox}
+          setIsOpenFindOption={setIsOpenFindOption}
+        />
       )}
     </>
   );

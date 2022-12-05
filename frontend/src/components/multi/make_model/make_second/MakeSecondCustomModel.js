@@ -326,6 +326,7 @@ function MakeSecondCustomModel({
           }
           tempArr[i] = tempArr2;
         }
+        tempObj.thisModelPreviewThree = activeThree;
         tempObj.thisModelPreviewThreeNumArr = [...tempArr];
       }
 
