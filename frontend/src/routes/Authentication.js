@@ -53,7 +53,6 @@ const AuthBtn = styled(motion.button)`
 function Authentication() {
   const [value, setValue] = useState("");
   const PASSWORD = process.env.REACT_APP_PASSWORD;
-
   const navigate = useNavigate();
   const onChangeHandler = (e) => {
     setValue(e.target.value);

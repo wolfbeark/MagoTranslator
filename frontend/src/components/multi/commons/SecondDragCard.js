@@ -179,7 +179,11 @@ function SecondDragCard(props) {
       y: carpetCenterY - carpetInfo.height * 0.36,
     },
   ];
-  const imgRouteArr = ["/images/TarotDefault/Default"];
+  const imgRouteArr = [
+    "/images/TarotDefault/Default",
+    "",
+    "/images/IChingDefault/iching",
+  ];
 
   const onDragStartHandler = (e) => {
     let alpha = waitingInfo.x - (e.pageX - e.offsetX);
@@ -788,7 +792,9 @@ function SecondDragCard(props) {
         );
         break;
       case 2:
-        setImgRoute(`/images/IChing/iching${dragCardNumArr[_count]}.png`);
+        setImgRoute(
+          `/images/IChingDefault/iching${SecondRanNumArr[CurrentSelectNum][cardCount]}.png`
+        );
         break;
       case 3:
         break;

@@ -618,7 +618,9 @@ function MakeSecondDefaultModel({
       // Deck Type
       tempObj.thisModelDeckType = deckType;
       tempObj.thisModelTotalCardCount = new Array(5);
-
+      tempObj.thisModelPreviewThree = Boolean(
+        localStorage.getItem("SecondDefaultPreviewThree")
+      );
       // List Name
       let tempNameArr = new Array(5);
       tempNameArr[0] = nameValue0;

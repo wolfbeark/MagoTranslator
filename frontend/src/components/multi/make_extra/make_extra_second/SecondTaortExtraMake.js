@@ -181,7 +181,7 @@ const questionBtnVar = {
   },
 };
 
-function SecondPokerExtraMake(props) {
+function SecondTaortExtraMake(props) {
   const setExtraType = props.setExtraType;
   const setActiveMakeExtra = props.setActiveMakeExtra;
 
@@ -815,4 +815,4 @@ function SecondPokerExtraMake(props) {
   );
 }
 
-export default SecondPokerExtraMake;
+export default SecondTaortExtraMake;

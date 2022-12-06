@@ -6,8 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRecoilState } from "recoil";
 
 import { AllCenterDiv } from "../../../../CommonComponents";
-import SecondPokerExtraMake from "./SecondPokerExtraMake";
+import SecondTaortExtraMake from "./SecondTaortExtraMake";
 import { multiManagerAtom } from "../../../../atom/multiAtom";
+import SecondIChingExtraMake from "./SecondIChingExtraMake";
 
 const OptionalBlock = styled(AllCenterDiv)`
   width: 100%;
@@ -100,7 +101,13 @@ function SecondMakeExtra(props) {
               <MakeExtraPannel>
                 <AnimatePresence>
                   {extraType === 0 ? (
-                    <SecondPokerExtraMake
+                    <SecondTaortExtraMake
+                      setActiveMakeExtra={setActiveMakeExtra}
+                      setExtraType={setExtraType}
+                    />
+                  ) : null}
+                  {extraType === 2 ? (
+                    <SecondIChingExtraMake
                       setActiveMakeExtra={setActiveMakeExtra}
                       setExtraType={setExtraType}
                     />

@@ -9,6 +9,7 @@ import MultiDragCard from "../commons/MultiDragCard";
 import MakeExtra from "../make_extra/MakeExtra";
 import MultiFind from "../find/MultiFind";
 import MultiFindControl from "../find/MultiFindControl";
+import QuestionOption from "../commons/QuestionOption";
 
 const AllCenterDiv = styled(motion.div)`
   display: flex;
@@ -244,6 +245,10 @@ function SpreadScreen() {
   const [isOpenFind, setIsOpenFind] = useState(false);
   const [isOpenFindOption, setIsOpenFindOption] = useState(false);
 
+  const [isOpenOption, setIsOpenOption] = useState(false);
+  const [optionType, setOptionType] = useState(10);
+  // 0 : restart
+
   useEffect(() => {
     let tempTotal = totalRef.current.getBoundingClientRect();
     let tempInfo = waitingRef.current.getBoundingClientRect();
@@ -450,7 +455,15 @@ function SpreadScreen() {
           </CardCountBoard>
           <SpreadControlBtnBox>
             <SpreadControlBtnWrapper>
-              <SpreadControlBtn>Restart</SpreadControlBtn>
+              <SpreadControlBtn
+                onClick={() => {
+                  setIsOpenOption(true);
+                  setOptionType(0);
+                  openControlBox();
+                }}
+              >
+                Restart
+              </SpreadControlBtn>
             </SpreadControlBtnWrapper>
             <SpreadControlBtnWrapper>
               <SpreadControlBtn>Hide</SpreadControlBtn>
@@ -484,6 +497,13 @@ function SpreadScreen() {
           setIsOpenFindOption={setIsOpenFindOption}
         />
       )}
+      {optionType !== 10 && isOpenOption === true ? (
+        <QuestionOption
+          optionType={optionType}
+          setIsOpenOption={setIsOpenOption}
+          setOptionType={setOptionType}
+        />
+      ) : null}
     </>
   );
 }
